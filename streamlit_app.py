@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import time
+import base64
+import os
 
 # ---------------------------
 # PAGE CONFIG
@@ -20,6 +22,17 @@ if "streak" not in st.session_state:
 
 if "missions_done" not in st.session_state:
     st.session_state.missions_done = 3
+
+# ---------------------------
+# HELPER: LOAD LOCAL IMAGE
+# ---------------------------
+def get_image_base64(path):
+    """Encodes a local image to base64 for HTML embedding."""
+    if os.path.exists(path):
+        with open(path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+        return f"data:image/jpeg;base64,{encoded_string}"
+    return None
 
 # ---------------------------
 # CUSTOM THEME (BLACK WHITE + BLUE) & UI POLISH
@@ -119,13 +132,13 @@ st.markdown("""
     }
     .profile-img {
         border-radius: 50%;
-        border: 2px solid #0066ff;
-        padding: 4px;
-        background: linear-gradient(145deg, #111, #222);
+        border: 3px solid #0066ff; /* Thicker border for photo */
+        padding: 3px;
+        background: #111;
         width: 140px;
         height: 140px;
-        object-fit: cover;
-        box-shadow: 0 0 25px rgba(0, 102, 255, 0.2);
+        object-fit: cover; /* Ensures your photo fills the circle perfectly */
+        box-shadow: 0 0 25px rgba(0, 102, 255, 0.3);
     }
     
     /* Log Entry Style */
@@ -153,8 +166,15 @@ st.markdown("""
 with st.sidebar:
     st.markdown('<div class="section-title" style="font-size: 20px; border: none;">💻 Command Center</div>', unsafe_allow_html=True)
     
-    # --- Profile Section (Web Avatar) ---
-    img_src = "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&backgroundColor=0a0a0a"
+    # --- Profile Section Logic ---
+    # 1. Try to load local 'id.jpg'
+    # 2. Fallback to default avatar if file is missing
+    local_img_path = "id.jpg"
+    img_src = get_image_base64(local_img_path)
+    
+    if img_src is None:
+        # Fallback URL if id.jpg isn't uploaded to GitHub yet
+        img_src = "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&backgroundColor=0a0a0a"
 
     st.markdown(f"""
         <div class="profile-img-container">
