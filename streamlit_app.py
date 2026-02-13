@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import time
-import os
-import base64
 
 # ---------------------------
 # PAGE CONFIG
@@ -22,18 +20,6 @@ if "streak" not in st.session_state:
 
 if "missions_done" not in st.session_state:
     st.session_state.missions_done = 3
-
-# ---------------------------
-# HELPER FUNCTIONS
-# ---------------------------
-def get_image_base64(path):
-    """Encodes a local image to base64 for HTML embedding."""
-    try:
-        with open(path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode()
-        return f"data:image/jpeg;base64,{encoded_string}"
-    except Exception:
-        return None
 
 # ---------------------------
 # CUSTOM THEME (BLACK WHITE + BLUE) & UI POLISH
@@ -167,14 +153,8 @@ st.markdown("""
 with st.sidebar:
     st.markdown('<div class="section-title" style="font-size: 20px; border: none;">💻 Command Center</div>', unsafe_allow_html=True)
     
-    # --- Profile Section Logic ---
-    # Attempts to load 'id.jpg' if it exists, otherwise uses default
-    local_img_path = "id.jpg"
-    img_src = get_image_base64(local_img_path)
-    
-    if img_src is None:
-        # Fallback to Dicebear if id.jpg is not found
-        img_src = "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&backgroundColor=0a0a0a"
+    # --- Profile Section (Web Avatar) ---
+    img_src = "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&backgroundColor=0a0a0a"
 
     st.markdown(f"""
         <div class="profile-img-container">
